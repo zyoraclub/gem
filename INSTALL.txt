@@ -1,0 +1,117 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          GEM PORTAL AUTOMATION - INSTALLATION GUIDE              ║
+╚══════════════════════════════════════════════════════════════════╝
+
+STEP 1: INSTALL REQUIREMENTS
+─────────────────────────────
+
+FOR MAC USERS:
+  1. Open "Terminal" (Press Cmd+Space, type Terminal, press Enter)
+  2. Copy and paste this command, press Enter:
+     
+     brew install python@3.11 node
+     
+     (If brew is not installed, first run:)
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+FOR WINDOWS USERS:
+  1. Download Python: https://www.python.org/downloads/
+     - IMPORTANT: Check ✅ "Add Python to PATH" during installation!
+  
+  2. Download Node.js: https://nodejs.org/
+     - Choose "LTS" version
+     - Just click Next through the installer
+
+
+STEP 2: SETUP THE APPLICATION
+─────────────────────────────
+
+FOR MAC USERS:
+  1. Open Terminal
+  2. Navigate to the gem folder:
+     cd /path/to/gem
+  
+  3. Run setup:
+     ./setup.sh
+
+FOR WINDOWS USERS:
+  1. Open the "gem" folder
+  2. Double-click "setup.bat"
+
+
+STEP 3: START THE APPLICATION
+─────────────────────────────
+
+FOR MAC USERS:
+  Run in Terminal:
+     ./start.sh
+
+FOR WINDOWS USERS:
+  Double-click "start.bat"
+
+
+STEP 4: OPEN IN BROWSER
+─────────────────────────────
+
+Open your web browser and go to:
+
+     http://localhost:3000
+
+
+STEP 7: (OPTIONAL) ENABLE AUTO-START
+─────────────────────────────────────
+
+To start the app automatically when your computer boots:
+
+FOR MAC USERS:
+  Run in Terminal:
+     ./enable-autostart.sh
+
+FOR WINDOWS USERS:
+  Double-click "enable-autostart.bat"
+
+To disable auto-start later:
+  Mac: ./disable-autostart.sh
+  Windows: Double-click "disable-autostart.bat"
+
+
+STEP 5: CONNECT GOOGLE SHEETS
+─────────────────────────────
+
+  1. Go to "Integrations" page in the app
+  2. Click "Connect" under Google Sheets
+  3. Sign in with your Google account
+  4. Allow all permissions
+
+
+STEP 6: (OPTIONAL) SETUP GMAIL FOR OTP
+──────────────────────────────────────
+
+  1. Enable 2-Step Verification in Google Account
+  2. Go to: https://myaccount.google.com/apppasswords
+  3. Create App Password for "Mail"
+  4. In app → Integrations → Gmail IMAP
+  5. Enter email and App Password
+
+
+═══════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING
+───────────────
+
+Problem: "command not found" 
+Solution: Restart Terminal and try again
+
+Problem: "Port already in use"
+Solution: Close other terminals and try again
+
+Problem: App won't start
+Solution: 
+  - Mac: Run in Terminal: pkill -f uvicorn && pkill -f node
+  - Windows: Close all command windows, restart
+
+═══════════════════════════════════════════════════════════════════
+
+For support, contact: [Your Email Here]
+
+═══════════════════════════════════════════════════════════════════

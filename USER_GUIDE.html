@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEM Automation - User Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 12px;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .toc {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .toc h2 {
+            margin-bottom: 15px;
+            color: #1a1a2e;
+        }
+        .toc ul {
+            list-style: none;
+        }
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .toc li:last-child {
+            border-bottom: none;
+        }
+        .toc a {
+            color: #0066cc;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .toc .step-num {
+            background: #1a1a2e;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .section h2 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section h2 .num {
+            background: #1a1a2e;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step h4 {
+            color: #0066cc;
+            margin-bottom: 8px;
+        }
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success h4 {
+            color: #155724;
+            margin-bottom: 8px;
+        }
+        .code {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        .code-inline {
+            background: #e9ecef;
+            color: #d63384;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .screenshot-placeholder {
+            background: #e9ecef;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            margin: 15px 0;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #1a1a2e;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #2d2d4a;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .collapsible {
+            background: #f8f9fa;
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .collapsible:hover {
+            background: #e9ecef;
+        }
+        .collapsible::after {
+            content: '+';
+            font-size: 1.5rem;
+            font-weight: 300;
+        }
+        .collapsible.active::after {
+            content: '−';
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #fafafa;
+            border-radius: 0 0 8px 8px;
+        }
+        .collapsible-content .inner {
+            padding: 20px;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🛒 GEM Automation</h1>
+        <p>Complete User Guide - Step by Step Instructions</p>
+    </header>
+
+    <!-- Table of Contents -->
+    <div class="toc">
+        <h2>📋 Table of Contents</h2>
+        <ul>
+            <li><a href="#section1"><span class="step-num">1</span> Installation - Unzip & Setup</a></li>
+            <li><a href="#section2"><span class="step-num">2</span> Starting the Application</a></li>
+            <li><a href="#section3"><span class="step-num">3</span> Create Gmail App Password</a></li>
+            <li><a href="#section4"><span class="step-num">4</span> Connect Google Sheets</a></li>
+            <li><a href="#section5"><span class="step-num">5</span> Configure Gmail IMAP Settings</a></li>
+            <li><a href="#section6"><span class="step-num">6</span> How to Scrape Products</a></li>
+            <li><a href="#section7"><span class="step-num">7</span> How to Fill Forms (Automation)</a></li>
+            <li><a href="#section8"><span class="step-num">8</span> Troubleshooting</a></li>
+        </ul>
+    </div>
+
+    <!-- Section 1: Installation -->
+    <div class="section" id="section1">
+        <h2><span class="num">1</span> Installation - Unzip & Setup</h2>
+        
+        <div class="step">
+            <h4>Step 1.1: Unzip the Package</h4>
+            <p>Extract the <span class="code-inline">gem-automation.zip</span> file to any folder on your computer.</p>
+            <ul>
+                <li><strong>Windows:</strong> Right-click the zip file → "Extract All" → Choose a location</li>
+                <li><strong>Mac:</strong> Double-click the zip file to extract automatically</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>Step 1.2: Open Terminal/Command Prompt</h4>
+            <p><strong>Windows:</strong></p>
+            <ol>
+                <li>Open the extracted folder</li>
+                <li>Hold <span class="code-inline">Shift</span> and right-click inside the folder</li>
+                <li>Select "Open PowerShell window here" or "Open command window here"</li>
+            </ol>
+            <p><strong>Mac:</strong></p>
+            <ol>
+                <li>Open Terminal (press <span class="code-inline">Cmd + Space</span>, type "Terminal", press Enter)</li>
+                <li>Type <span class="code-inline">cd </span> (with a space), then drag the extracted folder into Terminal</li>
+                <li>Press Enter</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 1.3: Run the Setup Script</h4>
+            <p>This installs all requirements (only needed once):</p>
+            <div class="code">
+# Windows:<br>
+setup.bat<br><br>
+# Mac:<br>
+chmod +x setup.sh && ./setup.sh
+            </div>
+            <p>Wait for it to complete. This may take 5-10 minutes.</p>
+        </div>
+
+        <div class="success">
+            <h4>✅ Setup Complete When You See:</h4>
+            <p>"Setup completed successfully! Run start.bat to launch the application"</p>
+        </div>
+    </div>
+
+    <!-- Section 2: Starting the Application -->
+    <div class="section" id="section2">
+        <h2><span class="num">2</span> Starting the Application</h2>
+        
+        <div class="step">
+            <h4>Step 2.1: Run the Start Script</h4>
+            <div class="code">
+# Windows:<br>
+start.bat<br><br>
+# Mac:<br>
+./start.sh
+            </div>
+        </div>
+
+        <div class="step">
+            <h4>Step 2.2: Open the Dashboard</h4>
+            <p>After the servers start, your browser will automatically open to:</p>
+            <div class="code">http://localhost:3000</div>
+            <p>If it doesn't open automatically, manually type this address in your browser.</p>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Keep Terminal Open</h4>
+            <p>Don't close the terminal window! The application runs from there. To stop the app, press <span class="code-inline">Ctrl+C</span> in the terminal.</p>
+        </div>
+    </div>
+
+    <!-- Section 3: Gmail App Password -->
+    <div class="section" id="section3">
+        <h2><span class="num">3</span> Create Gmail App Password</h2>
+        <p>App Password is needed for OTP fetching during GEM form filling.</p>
+        
+        <div class="step">
+            <h4>Step 3.1: Enable 2-Factor Authentication</h4>
+            <ol>
+                <li>Go to <a href="https://myaccount.google.com/security" target="_blank">myaccount.google.com/security</a></li>
+                <li>Sign in to your Google account</li>
+                <li>Under "How you sign in to Google", click <strong>"2-Step Verification"</strong></li>
+                <li>Follow the steps to enable it (use your phone number)</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 3.2: Generate App Password</h4>
+            <ol>
+                <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a></li>
+                <li>Sign in if asked</li>
+                <li>In "App name" field, type: <span class="code-inline">GEM Automation</span></li>
+                <li>Click <strong>"Create"</strong></li>
+                <li>You will see a 16-character password like: <span class="code-inline">abcd efgh ijkl mnop</span></li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <h4>⚠️ Important!</h4>
+            <ul>
+                <li>Copy this password immediately - you won't see it again!</li>
+                <li>Remove spaces when entering: <span class="code-inline">abcdefghijklmnop</span></li>
+                <li>Store it safely - you'll need it for the next step</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Section 4: Connect Google Sheets -->
+    <div class="section" id="section4">
+        <h2><span class="num">4</span> Connect Google Sheets</h2>
+        
+        <div class="step">
+            <h4>Step 4.1: Open Integrations Page</h4>
+            <ol>
+                <li>In the dashboard, click <strong>"Integrations"</strong> in the left sidebar</li>
+                <li>Find the <strong>"Google Sheets"</strong> card</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 4.2: Connect Your Account</h4>
+            <ol>
+                <li>Click the <strong>"Connect Google Sheets"</strong> button</li>
+                <li>A Google login popup will appear</li>
+                <li>Select your Google account</li>
+                <li>Click <strong>"Continue"</strong> (even if it shows "unverified app" warning)</li>
+                <li>Check all permission boxes and click <strong>"Continue"</strong></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 4.3: Select Your Sheet</h4>
+            <ol>
+                <li>After connecting, click <strong>"Select Sheet"</strong></li>
+                <li>Choose your GEM products sheet from the list</li>
+                <li>The sheet ID will be saved automatically</li>
+            </ol>
+        </div>
+
+        <div class="success">
+            <h4>✅ Connection Successful</h4>
+            <p>You'll see a green "Connected" status with your email displayed.</p>
+        </div>
+
+        <button class="collapsible">Sheet Format Requirements</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <p>Your Google Sheet should have these columns:</p>
+                <table>
+                    <tr><th>Column</th><th>Content</th><th>Required</th></tr>
+                    <tr><td>A</td><td>Product URL (GEM portal link)</td><td>Yes</td></tr>
+                    <tr><td>B</td><td>Product ID (auto-filled by scraper)</td><td>Auto</td></tr>
+                    <tr><td>E</td><td>Price (auto-filled by scraper)</td><td>Auto</td></tr>
+                    <tr><td>F</td><td>Status (auto-filled)</td><td>Auto</td></tr>
+                    <tr><td>G</td><td>Product Code (auto-filled)</td><td>Auto</td></tr>
+                    <tr><td>K</td><td>Last Updated timestamp</td><td>Auto</td></tr>
+                    <tr><td>L</td><td>Previous Price</td><td>Auto</td></tr>
+                    <tr><td>M</td><td>Price Changed (YES/NO)</td><td>Auto</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Gmail IMAP Settings -->
+    <div class="section" id="section5">
+        <h2><span class="num">5</span> Configure Gmail IMAP Settings</h2>
+        <p>This is for reading OTP emails during GEM form automation.</p>
+        
+        <div class="step">
+            <h4>Step 5.1: Enable IMAP in Gmail</h4>
+            <ol>
+                <li>Open Gmail in your browser</li>
+                <li>Click the gear icon ⚙️ → <strong>"See all settings"</strong></li>
+                <li>Go to <strong>"Forwarding and POP/IMAP"</strong> tab</li>
+                <li>Under "IMAP access", select <strong>"Enable IMAP"</strong></li>
+                <li>Click <strong>"Save Changes"</strong></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 5.2: Enter Settings in Dashboard</h4>
+            <ol>
+                <li>In the dashboard, go to <strong>"Integrations"</strong></li>
+                <li>Find <strong>"Gmail IMAP Settings"</strong> section</li>
+                <li>Enter the following:</li>
+            </ol>
+            <table>
+                <tr><th>Field</th><th>Value</th></tr>
+                <tr><td>IMAP Server</td><td><span class="code-inline">imap.gmail.com</span></td></tr>
+                <tr><td>Port</td><td><span class="code-inline">993</span></td></tr>
+                <tr><td>Email</td><td>Your Gmail address (same as GEM login)</td></tr>
+                <tr><td>App Password</td><td>The 16-character password from Step 3</td></tr>
+            </table>
+        </div>
+
+        <div class="step">
+            <h4>Step 5.3: Test Connection</h4>
+            <ol>
+                <li>Click <strong>"Save Settings"</strong></li>
+                <li>Click <strong>"Test Connection"</strong></li>
+                <li>Wait for success message</li>
+            </ol>
+        </div>
+
+        <div class="success">
+            <h4>✅ IMAP Connected</h4>
+            <p>You'll see "Connection successful! Found X emails in inbox"</p>
+        </div>
+    </div>
+
+    <!-- Section 6: How to Scrape -->
+    <div class="section" id="section6">
+        <h2><span class="num">6</span> How to Scrape Products</h2>
+        
+        <div class="step">
+            <h4>Step 6.1: Prepare Your Sheet</h4>
+            <ol>
+                <li>Open your Google Sheet</li>
+                <li>In column A, paste GEM product URLs (one per row)</li>
+                <li>Example URL: <span class="code-inline">https://gem.gov.in/product/12345678</span></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 6.2: Go to Dashboard</h4>
+            <ol>
+                <li>Click <strong>"Dashboard"</strong> in the sidebar (or go to home)</li>
+                <li>You'll see your stats: Total Products, Success Rate, etc.</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 6.3: Start Scraping</h4>
+            <ol>
+                <li>Click the <strong>"Start Scraping"</strong> button</li>
+                <li>Wait for the process to complete</li>
+                <li>Progress will be shown on screen</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 6.4: View Results</h4>
+            <ol>
+                <li>Check your Google Sheet - columns B, E, F, G, K, L, M will be filled</li>
+                <li>Column M shows "YES" if price changed from last scrape</li>
+                <li>Dashboard shows updated statistics</li>
+            </ol>
+        </div>
+
+        <button class="collapsible">What Gets Scraped?</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li><strong>Product ID:</strong> Unique GEM product identifier</li>
+                    <li><strong>Price:</strong> Current listed price</li>
+                    <li><strong>Status:</strong> Active, Inactive, etc.</li>
+                    <li><strong>Product Code:</strong> GEM catalog code</li>
+                    <li><strong>Price Tracking:</strong> Compares with previous price and marks changes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 7: Form Filling -->
+    <div class="section" id="section7">
+        <h2><span class="num">7</span> How to Fill Forms (Automation)</h2>
+        
+        <div class="warning">
+            <h4>📌 Prerequisites</h4>
+            <ul>
+                <li>Chrome browser installed</li>
+                <li>Gmail IMAP configured (for OTP)</li>
+                <li>Logged into GEM portal in Chrome</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h4>Step 7.1: Go to Automation Page</h4>
+            <ol>
+                <li>Click <strong>"Automation"</strong> in the sidebar</li>
+                <li>Click <strong>"Check Chrome"</strong> to verify Chrome is detected</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 7.2: Load Products</h4>
+            <ol>
+                <li>Click <strong>"Load Data"</strong> button</li>
+                <li>Products from your sheet will appear in the table</li>
+                <li>Products marked "NEW-PRODUCT" in Status column will be shown</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 7.3: Select Products</h4>
+            <ol>
+                <li>Check the boxes next to products you want to process</li>
+                <li>Or use "Select All" to select everything</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 7.4: Start Automation</h4>
+            <ol>
+                <li>Click <strong>"Start Automation"</strong></li>
+                <li>Chrome will open and start filling forms automatically</li>
+                <li>OTPs will be read from your email automatically</li>
+                <li>Don't touch the Chrome window while running!</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h4>Step 7.5: Monitor Progress</h4>
+            <ol>
+                <li>Watch the progress on the Automation page</li>
+                <li>Each product status will update: Processing → Completed/Failed</li>
+                <li>Log messages show what's happening</li>
+            </ol>
+        </div>
+
+        <div class="success">
+            <h4>✅ Automation Complete</h4>
+            <p>Products will be marked as completed. Check GEM portal to verify uploads.</p>
+        </div>
+    </div>
+
+    <!-- Section 8: Troubleshooting -->
+    <div class="section" id="section8">
+        <h2><span class="num">8</span> Troubleshooting</h2>
+
+        <button class="collapsible">❌ "Port 8000 already in use"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <p>Another program is using the port. Fix:</p>
+                <div class="code">
+# Windows:<br>
+netstat -ano | findstr :8000<br>
+taskkill /PID [number] /F<br><br>
+# Mac:<br>
+lsof -i :8000<br>
+kill -9 [PID number]
+                </div>
+                <p>Then run start.bat/start.sh again.</p>
+            </div>
+        </div>
+
+        <button class="collapsible">❌ "Google Sheets not connecting"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li>Make sure you allowed all permissions in Google popup</li>
+                    <li>Try disconnecting and reconnecting</li>
+                    <li>Check if popup was blocked by browser</li>
+                    <li>Clear browser cache and try again</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible">❌ "IMAP connection failed"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li>Verify App Password is correct (no spaces)</li>
+                    <li>Make sure IMAP is enabled in Gmail settings</li>
+                    <li>Use your full email address (including @gmail.com)</li>
+                    <li>Try generating a new App Password</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible">❌ "Chrome not detected"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li>Make sure Chrome is installed</li>
+                    <li>Restart the application</li>
+                    <li>Windows: Chrome should be in default location</li>
+                    <li>Mac: Chrome should be in Applications folder</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible">❌ "Scraping failed"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li>Check if GEM portal website is accessible</li>
+                    <li>Verify URLs in column A are correct GEM product links</li>
+                    <li>Check your internet connection</li>
+                    <li>Some products may be removed from GEM - check manually</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible">❌ "OTP not being read"</button>
+        <div class="collapsible-content">
+            <div class="inner">
+                <ul>
+                    <li>Verify Gmail IMAP settings are saved correctly</li>
+                    <li>Test the IMAP connection in Integrations page</li>
+                    <li>Make sure OTP emails are going to inbox (not spam)</li>
+                    <li>Check if email address matches GEM account</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="step" style="margin-top: 30px;">
+            <h4>📞 Need More Help?</h4>
+            <p>If you're still having issues:</p>
+            <ol>
+                <li>Check the terminal window for error messages</li>
+                <li>Restart the application (Ctrl+C, then run start script again)</li>
+                <li>Take a screenshot of the error and contact support</li>
+            </ol>
+        </div>
+    </div>
+
+    <footer>
+        <p>GEM Automation User Guide v1.0</p>
+        <p>Made with ❤️ for easy GEM portal management</p>
+    </footer>
+</div>
+
+<script>
+    // Collapsible sections
+    document.querySelectorAll('.collapsible').forEach(button => {
+        button.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        });
+    });
+
+    // Smooth scrolling for TOC links
+    document.querySelectorAll('.toc a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
+
+</body>
+</html>
