@@ -16,8 +16,9 @@ class ScrapeToSheetRequest(BaseModel):
     query: str
     sheet_id: str
     tab_name: Optional[str] = "Sheet1"
-    max_products: Optional[int] = 100
+    max_products: Optional[int] = None  # None = fetch ALL products
     category_index: Optional[int] = 0
+    fetch_all: Optional[bool] = True  # Default: get all products in category
 
 
 @router.get("/search")
@@ -97,10 +98,11 @@ async def scrape_to_sheet(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Scrape products and save directly to Google Sheet
+    Scrape ALL products and save directly to Google Sheet
     
-    1. Searches for products by query
-    2. Writes results to specified Google Sheet
+    1. Finds category for search query
+    2. Fetches ALL products with pagination
+    3. Writes results to specified Google Sheet
     """
     sheets_service = SheetsService(db, current_user.id)
     
@@ -110,37 +112,41 @@ async def scrape_to_sheet(
         raise HTTPException(status_code=400, detail="Google Sheets not connected. Please connect first.")
     
     try:
-        # Scrape products
-        result = scraper.search_products(request.query, page=1, category_index=request.category_index)
-        products = result.get("products", [])
+        # First find the category
+        categories = scraper.search_categories(request.query)
+        if not categories:
+            return {"success": False, "message": "No categories found for this search", "count": 0}
         
-        # Get more pages if needed
-        total_fetched = len(products)
-        page = 2
-        while total_fetched < request.max_products and result.get("has_more", False):
-            result = scraper.search_products(request.query, page=page, category_index=request.category_index)
-            products.extend(result.get("products", []))
-            total_fetched = len(products)
-            page += 1
+        # Use specified category index
+        category_index = min(request.category_index, len(categories) - 1)
+        selected_category = categories[category_index]
+        category_slug = selected_category.get("slug")
         
-        # Limit to max_products
-        products = products[:request.max_products]
+        print(f"[Scrape] Using category: {selected_category.get('name')} ({category_slug})")
+        print(f"[Scrape] Total products in category: {selected_category.get('product_count')}")
+        
+        # Fetch ALL products with pagination
+        products = scraper.get_all_products(category_slug, max_products=request.max_products)
         
         if not products:
-            return {"success": False, "message": "No products found", "count": 0}
+            return {"success": False, "message": "No products found in category", "count": 0}
         
         # Prepare data for sheet - headers + rows
-        headers = ["Product Name", "Price", "Unit", "Seller", "Product ID", "Category", "Image URL"]
+        headers = ["Product Name", "Brand", "Price", "List Price", "Discount %", "MOQ", "Seller", "Rating", "Product URL", "Image URL"]
         rows = [headers]
         
         for p in products:
+            seller = p.get("seller", {}) if isinstance(p.get("seller"), dict) else {}
             rows.append([
-                p.get("name", ""),
-                str(p.get("price", "")),
-                p.get("unit", ""),
-                p.get("seller", ""),
-                p.get("product_id", ""),
-                p.get("category", request.query),
+                p.get("title", ""),
+                p.get("brand", ""),
+                str(p.get("final_price", "")),
+                str(p.get("list_price", "")),
+                str(p.get("discount_percent", "")),
+                str(p.get("moq", "")),
+                seller.get("name", "") if seller else "",
+                str(seller.get("rating", "")) if seller else "",
+                p.get("url", ""),
                 p.get("image_url", "")
             ])
         
@@ -152,12 +158,16 @@ async def scrape_to_sheet(
             "success": True,
             "message": f"Scraped {len(products)} products and saved to sheet",
             "count": len(products),
+            "category": selected_category.get("name"),
+            "category_total": selected_category.get("product_count"),
             "sheet_id": request.sheet_id,
             "range": range_name,
             "rows_written": write_result.get("updatedRows", len(rows))
         }
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 

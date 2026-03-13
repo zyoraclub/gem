@@ -72,7 +72,7 @@ class GEMScraper:
         page: int = 1, 
         sort: str = "price_in_asc"
     ) -> Dict:
-        """Get products from a category"""
+        """Get products from a category with pagination info"""
         url = f"{self.BASE_URL}/{category_slug}/search"
         params = {"page": page, "sort": sort}
         
@@ -98,17 +98,22 @@ class GEMScraper:
                 }
                 products.append(product)
             
+            total_results = data.get("number_of_results", 0)
+            products_per_page = len(products)
+            
             return {
                 "products": products,
-                "total_results": data.get("number_of_results", 0),
+                "total_results": total_results,
                 "current_page": data.get("curr_page", page),
+                "products_per_page": products_per_page,
+                "has_more": (page * products_per_page) < total_results if products_per_page > 0 else False,
                 "category": data.get("browse_node", {}).get("title"),
                 "sort": data.get("current_sort_option")
             }
             
         except Exception as e:
             print(f"Error fetching products: {e}")
-            return {"products": [], "total_results": 0, "current_page": page}
+            return {"products": [], "total_results": 0, "current_page": page, "has_more": False}
     
     def _build_product_url(self, url_parts: List[str]) -> str:
         if url_parts and len(url_parts) >= 3:
@@ -124,29 +129,71 @@ class GEMScraper:
             "sold_as": seller.get("display_sold_as")
         }
     
-    def get_all_products(self, category_slug: str, max_products: int = None) -> List[Dict]:
-        """Get all products from a category"""
+    def get_all_products(self, category_slug: str, max_products: int = None, progress_callback=None) -> List[Dict]:
+        """
+        Get ALL products from a category with proper pagination.
+        
+        Args:
+            category_slug: Category URL slug
+            max_products: Optional limit (None = get all)
+            progress_callback: Optional function(fetched, total) for progress updates
+        """
         all_products = []
         page = 1
+        total_results = 0
+        retries = 0
+        max_retries = 3
         
         while True:
-            result = self.get_products_by_category(category_slug, page)
-            products = result.get("products", [])
-            
-            if not products:
-                break
-            
-            all_products.extend(products)
-            
-            if max_products and len(all_products) >= max_products:
-                all_products = all_products[:max_products]
-                break
-            
-            total = result.get("total_results", 0)
-            if len(all_products) >= total:
-                break
-            
-            page += 1
+            try:
+                result = self.get_products_by_category(category_slug, page)
+                products = result.get("products", [])
+                total_results = result.get("total_results", 0)
+                
+                if not products:
+                    # Retry empty response
+                    retries += 1
+                    if retries >= max_retries:
+                        print(f"[Scraper] No more products after {page-1} pages, {len(all_products)} products")
+                        break
+                    import time
+                    time.sleep(1)
+                    continue
+                
+                retries = 0  # Reset retry counter on success
+                all_products.extend(products)
+                
+                # Progress callback
+                if progress_callback:
+                    progress_callback(len(all_products), total_results)
+                
+                has_more = result.get("has_more", False)
+                print(f"[Scraper] Page {page}: {len(products)} products, Total: {len(all_products)}/{total_results}, has_more={has_more}")
+                
+                # Check max limit
+                if max_products and len(all_products) >= max_products:
+                    all_products = all_products[:max_products]
+                    print(f"[Scraper] Reached max_products limit: {max_products}")
+                    break
+                
+                # Check if we got all products (use has_more flag or total count)
+                if not has_more or len(all_products) >= total_results:
+                    print(f"[Scraper] Got all {len(all_products)} products (total_results={total_results})")
+                    break
+                
+                page += 1
+                
+                # Rate limiting - be nice to GEM servers
+                import time
+                time.sleep(0.5)
+                
+            except Exception as e:
+                print(f"[Scraper] Error on page {page}: {e}")
+                retries += 1
+                if retries >= max_retries:
+                    break
+                import time
+                time.sleep(2)
         
         return all_products
     
