@@ -375,6 +375,8 @@ async def upsert_products(
 
 # ==================== OAuth Callback (handles both) ====================
 
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+
 @router.get("/oauth/callback")
 async def oauth_callback(
     code: str = Query(None),
@@ -386,12 +388,12 @@ async def oauth_callback(
     # Check for OAuth errors from Google
     if error:
         print(f"[OAuth] Google returned error: {error}")
-        frontend_url = f"http://localhost:3000/integrations?error={error}"
+        frontend_url = f"{FRONTEND_URL}/integrations?error={error}"
         return RedirectResponse(url=frontend_url)
     
     if not code:
         print("[OAuth] No authorization code received")
-        frontend_url = "http://localhost:3000/integrations?error=No_authorization_code"
+        frontend_url = f"{FRONTEND_URL}/integrations?error=No_authorization_code"
         return RedirectResponse(url=frontend_url)
     
     try:
@@ -420,7 +422,7 @@ async def oauth_callback(
         print(f"[OAuth] Success! Connected: {result}")
         
         # Redirect to frontend integrations page
-        frontend_url = f"http://localhost:3000/integrations?{service_name}_connected=true"
+        frontend_url = f"{FRONTEND_URL}/integrations?{service_name}_connected=true"
         return RedirectResponse(url=frontend_url)
         
     except Exception as e:
@@ -429,5 +431,5 @@ async def oauth_callback(
         traceback.print_exc()
         # Redirect with error
         error_msg = str(e).replace(" ", "_")[:100]
-        frontend_url = f"http://localhost:3000/integrations?error={error_msg}"
+        frontend_url = f"{FRONTEND_URL}/integrations?error={error_msg}"
         return RedirectResponse(url=frontend_url)
